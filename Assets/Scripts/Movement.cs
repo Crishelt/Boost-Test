@@ -6,11 +6,14 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] float PropellerForce = 20f;
     [SerializeField] float RotationForce = 5f;
-    private Rigidbody rocket;
+    Rigidbody rocket;
+    AudioSource audioSource;
     // Start is called before the first frame update
     void Start()
     {
         rocket = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = true;
     }
 
     // Update is called once per frame
@@ -25,6 +28,14 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             rocket.AddRelativeForce(Vector3.up * PropellerForce * Time.deltaTime, ForceMode.Impulse);
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            audioSource.Stop();            
         }
     }
 
