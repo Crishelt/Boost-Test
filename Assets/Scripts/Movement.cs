@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] float PropellerForce = 20f;
-    [SerializeField] float RotationForce = 5f;
+    [SerializeField] float propellerForce = 20f;
+    [SerializeField] float rotationForce = 5f;
+    [SerializeField] AudioClip engineSound;
+    [SerializeField] List<ParticleSystem> propellerParticles;
     Rigidbody rocket;
     AudioSource audioSource;
     // Start is called before the first frame update
@@ -13,7 +15,6 @@ public class Movement : MonoBehaviour
     {
         rocket = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-        audioSource.loop = true;
     }
 
     // Update is called once per frame
@@ -27,15 +28,17 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rocket.AddRelativeForce(Vector3.up * PropellerForce * Time.deltaTime, ForceMode.Impulse);
+            rocket.AddRelativeForce(Vector3.up * propellerForce * Time.deltaTime, ForceMode.Impulse);
             if (!audioSource.isPlaying)
             {
-                audioSource.Play();
+                propellerParticles.ForEach(x => x.Play());
+                audioSource.PlayOneShot(engineSound);
             }
         }
         else
         {
-            audioSource.Stop();            
+            audioSource.Stop();
+            propellerParticles.ForEach(x => x.Stop());
         }
     }
 
@@ -53,6 +56,6 @@ public class Movement : MonoBehaviour
 
     void ApplyRotation(Vector3 direction)
     {
-        rocket.AddRelativeTorque(direction * RotationForce * Time.deltaTime, ForceMode.Impulse);
+        rocket.AddRelativeTorque(direction * rotationForce * Time.deltaTime, ForceMode.Impulse);
     }
 }
